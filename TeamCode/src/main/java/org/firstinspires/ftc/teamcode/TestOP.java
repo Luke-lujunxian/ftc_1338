@@ -43,48 +43,51 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 //@Disabled
 public class TestOP extends OpMode {
 
-  private ElapsedTime runtime = new ElapsedTime();
-  private DcMotor M1,M2,M3,M4;
-  @Override
-  public void init() {
-    telemetry.addData("Status", "Initialized");
-    telemetry.addData("AAAA","BBBBB");
-    M1 = hardwareMap.get(DcMotor.class,"motor1");
-    M2 = hardwareMap.get(DcMotor.class,"motor2");
-    M3 = hardwareMap.get(DcMotor.class,"motor3");
-    M4 = hardwareMap.get(DcMotor.class,"motor4");
-    telemetry.addData("MotorDeclare", "Complete");
+    private ElapsedTime runtime = new ElapsedTime();
+    private DcMotor MotorLF, MotorLB, MotorRF, MotorRB;
 
-  }
+    @Override
+    public void init() {
+        telemetry.addData("Status", "Initialized");
+        telemetry.addData("AAAA", "BBBBB");
 
-  /*
-     * Code to run when the op mode is first enabled goes here
-     * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#start()
+        //底盘四电机
+        MotorLF = hardwareMap.get(DcMotor.class, "motor1");//左前
+        MotorLB = hardwareMap.get(DcMotor.class, "motor2");//左后
+        MotorRF = hardwareMap.get(DcMotor.class, "motor3");//右前
+        MotorRB = hardwareMap.get(DcMotor.class, "motor4");//右后
+        telemetry.addData("MotorDeclare", "Complete");
+
+    }
+
+    /*
+       * Code to run when the op mode is first enabled goes here
+       * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#start()
+       */
+    @Override
+    public void init_loop() {
+    }
+
+    /*
+     * This method will be called ONCE when start is pressed
+     * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#loop()
      */
-  @Override
-  public void init_loop() {
-  }
+    @Override
+    public void start() {
+        runtime.reset();
+    }
 
-  /*
-   * This method will be called ONCE when start is pressed
-   * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#loop()
-   */
-  @Override
-  public void start() {
-    runtime.reset();
-  }
+    /*
+     * This method will be called repeatedly in a loop
+     * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#loop()
+     */
+    @Override
+    public void loop() {
+        telemetry.addData("Status", "Run Time: " + runtime.toString());
+        MotorLF.setPower(this.gamepad1.left_stick_y);
+        MotorLB.setPower(this.gamepad1.left_stick_y);
+        MotorRF.setPower(-this.gamepad1.right_stick_y);
+        MotorRB.setPower(-this.gamepad1.right_stick_y);
 
-  /*
-   * This method will be called repeatedly in a loop
-   * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#loop()
-   */
-  @Override
-  public void loop() {
-    telemetry.addData("Status", "Run Time: " + runtime.toString());
-    M2.setPower(this.gamepad1.left_stick_y);
-    M3.setPower(this.gamepad1.left_stick_y);
-    M1.setPower(-this.gamepad1.right_stick_y);
-    M4.setPower(-this.gamepad1.right_stick_y);
-
-  }
+    }
 }
