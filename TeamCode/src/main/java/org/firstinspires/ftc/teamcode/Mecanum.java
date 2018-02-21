@@ -40,10 +40,14 @@ public class Mecanum{
         double vx = v * Math.cos(aa);
         double vy = v * Math.sin(aa);
 
-        L1 = vy - vx;
-        L2 = vy + vx;
-        R1 = vy + vx;
-        R2 = vy - vx;
+        L1 = vy + vx;
+        L2 = vy - vx;
+        R1 = vy - vx;
+        R2 = vy + vx;
+        if(L1 == 0 && L2 == 0 ){
+            Stop();
+            return;
+        }
 
         double p = 1 / Math.max(L1,L2);
         L1 *= p;
@@ -56,12 +60,16 @@ public class Mecanum{
 
     //手柄控制
     public void Stick(double vx,double vy){
-        L1 = vy - vx;
-        L2 = vy + vx;
-        R1 = vy + vx;
-        R2 = vy - vx;
+        L1 = vy + vx;
+        L2 = vy - vx;
+        R1 = vy - vx;
+        R2 = vy + vx;
+        if(L1 == 0 && L2 == 0 ){
+            Stop();
+            return;
+        }
 
-        double p = 1 / Math.max(L1,L2);
+        double p = 1 / Math.max(Math.abs(L1),Math.abs(L2));
         L1 *= p;
         L2 *= p;
         R1 *= -p;
