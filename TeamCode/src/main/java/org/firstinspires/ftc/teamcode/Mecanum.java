@@ -48,8 +48,24 @@ public class Mecanum{
         double p = 1 / Math.max(L1,L2);
         L1 *= p;
         L2 *= p;
-        R1 *= p;
-        R2 *= p;
+        R1 *= -p;
+        R2 *= -p;
+        setMacanum();
+        return;
+    }
+
+    //手柄控制
+    public void Stick(double vx,double vy){
+        L1 = vy - vx;
+        L2 = vy + vx;
+        R1 = vy + vx;
+        R2 = vy - vx;
+
+        double p = 1 / Math.max(L1,L2);
+        L1 *= p;
+        L2 *= p;
+        R1 *= -p;
+        R2 *= -p;
         setMacanum();
         return;
     }
@@ -57,8 +73,8 @@ public class Mecanum{
     public void Circle(double w){//w-角速度
         double r = 1;
 
-        L1 = -1 * w * r;
-        L2 = -1 * w * r;
+        L1 = w * r;
+        L2 = w * r;
         R1 = w * r;
         R2 = w * r;
         setMacanum();

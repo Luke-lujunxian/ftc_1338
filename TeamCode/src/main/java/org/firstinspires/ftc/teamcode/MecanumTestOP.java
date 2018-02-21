@@ -79,6 +79,6 @@ public class MecanumTestOP extends OpMode {
   @Override
   public void loop() {
     telemetry.addData("Status", "Run Time: " + runtime.toString());
-    mecanum.Panning(1,45);//平移测试
+    mecanum.Stick(this.gamepad1.left_stick_x,this.gamepad1.left_stick_y);
   }
 }
