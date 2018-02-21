@@ -36,15 +36,37 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
+import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
+import org.firstinspires.ftc.robotcore.external.navigation.VuMarkInstanceId;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
+
 /**
  * Demonstrates empty OpMode
  */
 @Autonomous(name = "T2", group = "Concept")
 //@Disabled
 public class TestOP2 extends OpMode {
+    static int VisualResult = 0;
 
   private ElapsedTime runtime = new ElapsedTime();
   private DcMotor M1,M2,M3,M4;
+
+  public static final String TAG = "Vuforia VuMark Sample";
+
+    OpenGLMatrix lastLocation = null;
+
+    VuforiaLocalizer vuforia;
+
   @Override
   public void init() {
     telemetry.addData("Status", "Initialized");
@@ -53,36 +75,96 @@ public class TestOP2 extends OpMode {
     M3 = hardwareMap.get(DcMotor.class,"motor3");
     M4 = hardwareMap.get(DcMotor.class,"motor4");
     telemetry.addData("MotorDeclare", "Complete");
+
+    //Visual
+
+      int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+      VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
+
+      parameters.vuforiaLicenseKey = "ATFQie7/////AAAAmfcqlMzRHEYtqWyiIdus69o0nEEOtmVEfYJyxYE/NeCYxN/iRG3HDjowiap8OynvREQSp+M5Pi9A+DZ19W8X4bxlWPHiPhlO1U41AaGU3IPIlkPy1C/f2cqSCtHwAU5iuDKQBRjfLsVFOG3423+dsz2pdx4u/oBoAUG2lwQ/vY8nBJY+BsdUrBNvHNYb8n5LtfNpZQfqgCfM/2yJqWQZh0yKEdtKwYlq0Eeasv9p/8LwDOvVnEQX0q2TlZAZ5CktKx1qcxGOIiHchvPNTQ/ZlefsozJEKxAtwNYbCh6Z70T33yrtAmJanb/6vxgpJMP6R57jC4sX1BYceSwBva1WHLiXB+jsJsgbGKRI51O4I2IE";
+
+      parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
+      this.vuforia = ClassFactory.createVuforiaLocalizer(parameters);
+
+      VuforiaTrackables relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
+      VuforiaTrackable relicTemplate = relicTrackables.get(0);
+      relicTemplate.setName("relicVuMarkTemplate"); // can help in debugging; otherwise not necessary
+
+      telemetry.addData(">", "Press Play to start");
+      telemetry.update();
+
+      relicTrackables.activate();
+
+      while (true) {
+
+          RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
+          if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
+
+              telemetry.addData("VuMark", "%s visible", vuMark);
+              //保存识别结果
+              if(RelicRecoveryVuMark.LEFT == vuMark)
+                  VisualResult = 0;
+              else if(RelicRecoveryVuMark.CENTER == vuMark)
+                  VisualResult = 1;
+              else if(RelicRecoveryVuMark.RIGHT == vuMark)
+                  VisualResult = 2;
+              else
+                  telemetry.addData("ERROR","请Debug");
+
+              //可能没用的
+              OpenGLMatrix pose = ((VuforiaTrackableDefaultListener)relicTemplate.getListener()).getPose();
+              telemetry.addData("Pose", format(pose));
+
+              if (pose != null) {
+                  VectorF trans = pose.getTranslation();
+                  Orientation rot = Orientation.getOrientation(pose, AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
+
+                  double tX = trans.get(0);
+                  double tY = trans.get(1);
+                  double tZ = trans.get(2);
+
+                  double rX = rot.firstAngle;
+                  double rY = rot.secondAngle;
+                  double rZ = rot.thirdAngle;
+              }
+              //结束
+              break;
+          }
+          else {
+              telemetry.addData("VuMark", "not visible");
+          }
+
+          telemetry.update();
+      }
   }
 
-  /*
-     * Code to run when the op mode is first enabled goes here
-     * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#start()
-     */
+    String format(OpenGLMatrix transformationMatrix) {
+        return (transformationMatrix != null) ? transformationMatrix.formatAsTransform() : "null";
+    }
+
+
+
   @Override
   public void init_loop() {
   }
 
-  /*
-   * This method will be called ONCE when start is pressed
-   * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#loop()
-   */
+
   @Override
   public void start() {
     runtime.reset();
   }
 
-  /*
-   * This method will be called repeatedly in a loop
-   * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#loop()
-   */
+
   @Override
   public void loop() {
     telemetry.addData("Status", "Run Time: " + runtime.toString());
-    M1.setPower(0.5);
+    telemetry.addData("识别结果","%d",VisualResult);
+    telemetry.update();
+    /*M1.setPower(0.5);
     M2.setPower(-0.5);
     M3.setPower(-0.5);
-    M4.setPower(0.5);
+    M4.setPower(0.5);*/
 
   }
+
 }
