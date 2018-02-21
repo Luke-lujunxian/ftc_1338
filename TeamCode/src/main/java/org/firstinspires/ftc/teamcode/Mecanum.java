@@ -1,20 +1,14 @@
 package org.firstinspires.ftc.teamcode;
 
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-
-import javax.lang.model.type.NullType;
-
-
-@TeleOp
-
+/**
+ * Created by yuying75618 on 18/2/21.
+ */
 
 public class Mecanum{
     protected double L1 = 0;//左前
@@ -29,37 +23,30 @@ public class Mecanum{
         MotorL2.setPower(L2);
         MotorR1.setPower(R1);
         MotorR2.setPower(R2);
-    }
+        return;
+    } //设置电机速度
 
-
-
-    //平移
-    public void Panning(double v,double a){//v-速度，a-角度
-        double v_max = 1;
-        double aa = a / 180 * Math.PI;
-        double vx = v * Math.cos(aa);
-        double vy = v * Math.sin(aa);
-
-        L1 = vy + vx;
-        L2 = vy - vx;
-        R1 = vy - vx;
-        R2 = vy + vx;
-        if(L1 == 0 && L2 == 0 ){
-            Stop();
-            return;
-        }
-
-        double p = 1 / Math.max(L1,L2);
-        L1 *= p;
-        L2 *= p;
-        R1 *= -p;
-        R2 *= -p;
+    public void Stop(){
+        L1 = 0;
+        L2 = 0;
+        R1 = 0;
+        R2 = 0;
         setMacanum();
         return;
-    }
+    }    //停止
+    public void Circle(double w){
+        L1 = w;
+        L2 = w;
+        R1 = w;
+        R2 = w;
+        setMacanum();
+        return;
+    }//原地旋转
+    public void AutoMove(double v,double aa){
+        double a = aa / 180 * Math.PI;
+        double vx = v * Math.cos(a);
+        double vy = v * Math.sin(a);
 
-    //手柄控制
-    public void Stick(double vx,double vy){
         L1 = vy + vx;
         L2 = vy - vx;
         R1 = vy - vx;
@@ -74,29 +61,26 @@ public class Mecanum{
         L2 *= p;
         R1 *= -p;
         R2 *= -p;
-        setMacanum();
+        this.setMacanum();
         return;
-    }
-    //原地旋转
-    public void Circle(double w){//w-角速度
-        double r = 1;
+    }//设置速度与角度移动
+    public void Stick(double vx,double vy,double tp){
+        L1 = vy + vx;
+        L2 = vy - vx;
+        R1 = vy - vx;
+        R2 = vy + vx;
+        if(L1 == 0 && L2 == 0 ){
+            Stop();
+            return;
+        }
 
-        L1 = w * r;
-        L2 = w * r;
-        R1 = w * r;
-        R2 = w * r;
-        setMacanum();
+        double p = 1 / Math.max(Math.abs(L1),Math.abs(L2));
+        L1 *= p * tp;
+        L2 *= p * tp;
+        R1 *= -p * tp;
+        R2 *= -p * tp;
+        this.setMacanum();
         return;
-    }
-
-    public void Stop(){
-        L1 = 0;
-        L2 = 0;
-        R1 = 0;
-        R2 = 0;
-        setMacanum();
-        return;
-    }
-
+    }    //手柄控制
 
 }

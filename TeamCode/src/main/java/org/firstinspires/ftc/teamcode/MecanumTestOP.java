@@ -34,16 +34,20 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-/**
- * Demonstrates empty OpMode
- */
-@Autonomous(name = "MecT", group = "Concept")
+
+@Autonomous(name = "Mecanum", group = "Concept")
 //@Disabled
+
+/*麦轮控制操作：左摇杆控制平移，平移方向与摇杆方向相同
+左右trigger控制旋转，左为逆时针右为顺时针，暂不支持同时使用平移与旋转功能
+按住b切换为低速形态*/
 public class MecanumTestOP extends OpMode {
 
   private ElapsedTime runtime = new ElapsedTime();
-  private DcMotor M1,M2,M3,M4;
-  Mecanum mecanum;
+
+
+  private Mecanum mecanum = new Mecanum();
+
   @Override
   public void init() {
     telemetry.addData("Status", "Initialized");
@@ -78,7 +82,19 @@ public class MecanumTestOP extends OpMode {
    */
   @Override
   public void loop() {
+    double p;
+    if(this.gamepad1.b == true){
+      p = 0.2;
+    }
+    else{
+      p = 1;
+    }//低速切换
     telemetry.addData("Status", "Run Time: " + runtime.toString());
-    mecanum.Stick(this.gamepad1.left_stick_x,this.gamepad1.left_stick_y);
+    if(this.gamepad1.left_stick_x == 0 && this.gamepad1.left_stick_y == 0){
+      mecanum.Circle(p * (this.gamepad1.left_trigger - this.gamepad1.right_trigger));//原地旋转
+    }
+    else{
+      mecanum.Stick(this.gamepad1.left_stick_x,this.gamepad1.left_stick_y,p);//手柄平移
+    }
   }
 }
