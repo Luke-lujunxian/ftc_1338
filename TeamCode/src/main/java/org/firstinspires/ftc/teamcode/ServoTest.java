@@ -43,11 +43,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class ServoTest extends OpMode {
   double dpos = 0.01;
   private ElapsedTime runtime = new ElapsedTime();
-  Servo Ser1;
+  Servo Ser1,Ser2;
 
   @Override
   public void init() {
     Ser1 = hardwareMap.get(Servo.class,"ser1");
+    Ser2 = hardwareMap.get(Servo.class,"ser2");
     telemetry.addData("Status", "Initialized");
   }
 
@@ -80,6 +81,11 @@ public class ServoTest extends OpMode {
     if(this.gamepad1.a && Ser1.getPosition() > Servo.MIN_POSITION)
       Ser1.setPosition(Ser1.getPosition()-dpos);
     telemetry.addData("Position","%f",Ser1.getPosition());
+    if(this.gamepad1.x && Ser2.getPosition() < Servo.MAX_POSITION)
+      Ser2.setPosition(Ser2.getPosition()+dpos);
+    if(this.gamepad1.a && Ser2.getPosition() > Servo.MIN_POSITION)
+      Ser2.setPosition(Ser2.getPosition()-dpos);
+    telemetry.addData("Position","%f",Ser2.getPosition());
     telemetry.addData("Status", "Run Time: " + runtime.toString());
     telemetry.update();
   }
