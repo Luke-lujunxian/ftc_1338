@@ -29,21 +29,19 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-@TeleOp(name = "Mecanum", group = "Concept")
+@TeleOp(name = "MecanumTest2", group = "Concept")
 //@Disabled
 
 /*麦轮控制操作：左摇杆控制平移，平移方向与摇杆方向相同
 左右trigger控制旋转，左为逆时针右为顺时针，暂不支持同时使用平移与旋转功能
 按住b切换为低速形态*/
-public class MecanumTestOP extends OpMode {
+public class MecanumTestOP2 extends OpMode {
   private ElapsedTime runtime = new ElapsedTime();
   private Mecanum mecanum = new Mecanum();
 
@@ -85,7 +83,7 @@ public class MecanumTestOP extends OpMode {
       mecanum.Circle(p * (this.gamepad1.left_trigger - this.gamepad1.right_trigger));//原地旋转
     }
     else{
-      mecanum.Stick(this.gamepad1.left_stick_x * p,this.gamepad1.left_stick_y * p);//手柄平移
+      mecanum.Stick2(this.gamepad1.left_stick_x * p,this.gamepad1.left_stick_y * p);//手柄平移
     }
     mecanum.getPositionChange();
     telemetry.addData("LF","%.3f",mecanum.L1);
