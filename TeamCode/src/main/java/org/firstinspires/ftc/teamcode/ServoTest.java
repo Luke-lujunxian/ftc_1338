@@ -32,13 +32,14 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
  * Demonstrates empty OpMode
  */
-@Autonomous(name = "ServoTest", group = "Concept")
+@TeleOp(name = "ServoTest", group = "Concept")
 //@Disabled
 public class ServoTest extends OpMode {
   double dpos = 0.01;
@@ -81,11 +82,12 @@ public class ServoTest extends OpMode {
     if(this.gamepad1.a && Ser1.getPosition() > Servo.MIN_POSITION)
       Ser1.setPosition(Ser1.getPosition()-dpos);
     telemetry.addData("Position","%f",Ser1.getPosition());
-    if(this.gamepad1.x && Ser2.getPosition() < Servo.MAX_POSITION)
+    if(this.gamepad1.y && Ser2.getPosition() < Servo.MAX_POSITION)
       Ser2.setPosition(Ser2.getPosition()+dpos);
-    if(this.gamepad1.a && Ser2.getPosition() > Servo.MIN_POSITION)
+    if(this.gamepad1.b && Ser2.getPosition() > Servo.MIN_POSITION)
       Ser2.setPosition(Ser2.getPosition()-dpos);
-    telemetry.addData("Position","%f",Ser2.getPosition());
+    telemetry.addData("S2 Position","%f",Ser2.getPosition());
+    telemetry.addData("S1 Position","%f",Ser1.getPosition());
     telemetry.addData("Status", "Run Time: " + runtime.toString());
     telemetry.update();
   }
