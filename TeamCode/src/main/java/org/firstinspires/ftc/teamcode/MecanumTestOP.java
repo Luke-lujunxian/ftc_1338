@@ -33,6 +33,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
@@ -43,10 +44,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 左右trigger控制旋转，左为逆时针右为顺时针，暂不支持同时使用平移与旋转功能
 按住b切换为低速形态*/
 public class MecanumTestOP extends OpMode {
-
   private ElapsedTime runtime = new ElapsedTime();
-
-
   private Mecanum mecanum = new Mecanum();
 
   @Override
@@ -60,27 +58,14 @@ public class MecanumTestOP extends OpMode {
 
   }
 
-  /*
-     * Code to run when the op mode is first enabled goes here
-     * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#start()
-     */
   @Override
-  public void init_loop() {
-  }
+  public void init_loop() {}
 
-  /*
-   * This method will be called ONCE when start is pressed
-   * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#loop()
-   */
   @Override
   public void start() {
     runtime.reset();
   }
 
-  /*
-   * This method will be called repeatedly in a loop
-   * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#loop()
-   */
   @Override
   public void loop() {
     double p;
@@ -95,7 +80,7 @@ public class MecanumTestOP extends OpMode {
       mecanum.Circle(p * (this.gamepad1.left_trigger - this.gamepad1.right_trigger));//原地旋转
     }
     else{
-      mecanum.Stick(this.gamepad1.left_stick_x,this.gamepad1.left_stick_y,p);//手柄平移
+      mecanum.Stick(this.gamepad1.left_stick_x * p,this.gamepad1.left_stick_y * p);//手柄平移
     }
   }
 }

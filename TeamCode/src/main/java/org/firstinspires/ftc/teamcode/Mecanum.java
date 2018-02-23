@@ -57,28 +57,48 @@ public class Mecanum{
         }
 
         double p = 1 / Math.max(Math.abs(L1),Math.abs(L2));
-        L1 *= p;
-        L2 *= p;
-        R1 *= -p;
-        R2 *= -p;
+        if(p < 1){
+            L1 *= p;
+            L2 *= p;
+            R1 *= -p;
+            R2 *= -p;
+        }
+
         this.setMacanum();
         return;
     }//设置速度与角度移动
-    public void Stick(double vx,double vy,double tp){
-        L1 = vy + vx;
-        L2 = vy - vx;
-        R1 = vy - vx;
-        R2 = vy + vx;
+    public void Stick(double vx,double vy){
+        if(Math.abs(vx) > Math.abs(vy)){
+            L1 = vx;
+            L2 = -vx;
+            R1 = -vx;
+            R2 = vx;
+        }
+        else if (Math.abs(vx) < Math.abs(vy)){
+            L1 = vy;
+            L2 = vy;
+            R1 = vy;
+            R2 = vy;
+        }
+        else if(Math.abs(vx) == Math.abs(vy)){
+            L1 = 0;
+            L2 = 0;
+            R1 = 0;
+            R2 = 0;
+        }
+
         if(L1 == 0 && L2 == 0 ){
             Stop();
             return;
         }
 
         double p = 1 / Math.max(Math.abs(L1),Math.abs(L2));
-        L1 *= p * tp;
-        L2 *= p * tp;
-        R1 *= -p * tp;
-        R2 *= -p * tp;
+        if(p < 1) {
+            L1 *= p;
+            L2 *= p;
+            R1 *= -p;
+            R2 *= -p;
+        }
         this.setMacanum();
         return;
     }    //手柄控制
