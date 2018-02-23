@@ -76,7 +76,18 @@ public class TestOP2 extends OpMode {
     M4 = hardwareMap.get(DcMotor.class,"motor4");
     telemetry.addData("MotorDeclare", "Complete");
 
-    //Visual
+
+  }
+
+    String format(OpenGLMatrix transformationMatrix) {
+        return (transformationMatrix != null) ? transformationMatrix.formatAsTransform() : "null";
+    }
+
+
+
+  @Override
+  public void init_loop() {
+      //Visual
 
       int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
       VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
@@ -136,16 +147,6 @@ public class TestOP2 extends OpMode {
 
           telemetry.update();
       }
-  }
-
-    String format(OpenGLMatrix transformationMatrix) {
-        return (transformationMatrix != null) ? transformationMatrix.formatAsTransform() : "null";
-    }
-
-
-
-  @Override
-  public void init_loop() {
   }
 
 

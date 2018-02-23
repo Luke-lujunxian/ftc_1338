@@ -19,8 +19,8 @@ public class PIDClass {
                 if (!inRangeOf(LPosition, RPosition - 5, RPosition + 5)) {
                     double shift = LPosition - RPosition;
                     double deltaPower = gain(shift);
-                    LFMotor.setPower(-(power - deltaPower));
-                    LBMotor.setPower(-(power - deltaPower));
+                    LFMotor.setPower(power - deltaPower);
+                    LBMotor.setPower(power - deltaPower);
                     RFMotor.setPower(power + deltaPower);
                     RBMotor.setPower(power + deltaPower);
                 } else {

@@ -34,6 +34,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
@@ -44,7 +45,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class TestOP extends OpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
+    ElapsedTime LF,LB,RF,RB;
     private DcMotor MotorLF, MotorLB, MotorRF, MotorRB;
+    double speedLF,speedLB,speedRF,speedRB;
 
     @Override
     public void init() {
@@ -52,12 +55,17 @@ public class TestOP extends OpMode {
         telemetry.addData("AAAA", "BBBBB");
 
         //底盘四电机
-        MotorLF = hardwareMap.get(DcMotor.class, "motor1");//左前
-        MotorLB = hardwareMap.get(DcMotor.class, "motor2");//左后
-        MotorRF = hardwareMap.get(DcMotor.class, "motor3");//右前
-        MotorRB = hardwareMap.get(DcMotor.class, "motor4");//右后
+        MotorLF = hardwareMap.get(DcMotor.class, "motorLF");//左前
+        MotorLB = hardwareMap.get(DcMotor.class, "motorLB");//左后
+        MotorRF = hardwareMap.get(DcMotor.class, "motorRF");//右前
+        MotorRB = hardwareMap.get(DcMotor.class, "motorRB");//右后
         telemetry.addData("MotorDeclare", "Complete");
-
+        MotorRF.setDirection(DcMotorSimple.Direction.REVERSE);
+        MotorRB.setDirection(DcMotorSimple.Direction.REVERSE);
+        PIDClass.resetEncode(MotorLB);
+        PIDClass.resetEncode(MotorLF);
+        PIDClass.resetEncode(MotorRB);
+        PIDClass.resetEncode(MotorRF);
     }
 
     /*
@@ -75,6 +83,16 @@ public class TestOP extends OpMode {
     @Override
     public void start() {
         runtime.reset();
+        //MotorLF.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        runtime.reset();
+        MotorLF.setPower(1);
+        MotorLF.setTargetPosition(1000);
+        MotorRF.setPower(1);
+        MotorRF.setTargetPosition(1000);
+        MotorLB.setPower(1);
+        MotorLB.setTargetPosition(1000);
+        MotorRB.setPower(1);
+        MotorRB.setTargetPosition(1000);
     }
 
     /*
@@ -83,11 +101,43 @@ public class TestOP extends OpMode {
      */
     @Override
     public void loop() {
+        speedLF = MotorLF.getCurrentPosition()/runtime.time();
         telemetry.addData("Status", "Run Time: " + runtime.toString());
-        MotorLF.setPower(this.gamepad1.left_stick_y);
-        MotorLB.setPower(this.gamepad1.left_stick_y);
-        MotorRF.setPower(-this.gamepad1.right_stick_y);
-        MotorRB.setPower(-this.gamepad1.right_stick_y);
+        telemetry.addData("\nLFsp","%f",speedLF);
+        telemetry.addData("LFCP","%d",MotorLF.getCurrentPosition());
+        telemetry.addData("LFTP","%d",MotorLF.getTargetPosition());
+
+        telemetry.addData("\nLBsp","%f",speedLB);
+        telemetry.addData("LBCP","%d",MotorLB.getCurrentPosition());
+        telemetry.addData("LBTP","%d",MotorLB.getTargetPosition());
+
+        telemetry.addData("\nRFsp","%f",speedRF);
+        telemetry.addData("RFCP","%d",MotorRF.getCurrentPosition());
+        telemetry.addData("RFTP","%d",MotorLF.getTargetPosition());
+
+        telemetry.addData("\nRBsp","%f",speedRB);
+        telemetry.addData("RBCP","%d",MotorRB.getCurrentPosition());
+        telemetry.addData("RBTP","%d",MotorLF.getTargetPosition());
+        telemetry.update();
+        //if(this.gamepad1.x){
+
+            //MotorLF.setPower(1);
+            //if (!MotorLF.isBusy()||MotorLF.getCurrentPosition()==1000)
+        speedLF = MotorLF.getCurrentPosition()/runtime.time();
+        speedLB = MotorLB.getCurrentPosition()/runtime.time();
+        speedRF = MotorRF.getCurrentPosition()/runtime.time();
+        speedRB = MotorRB.getCurrentPosition()/runtime.time();
+
+
+        //}
+        //else
+        /*if(this.gamepad1.a)
+            MotorLB.setPower(1);
+        if(this.gamepad1.y)
+            MotorRF.setPower(1);
+        if(this.gamepad1.b)
+            MotorRB.setPower(1);*/
+
 
     }
 }

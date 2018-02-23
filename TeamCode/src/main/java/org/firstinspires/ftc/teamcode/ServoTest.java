@@ -30,34 +30,25 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-
-@TeleOp(name = "Mecanum", group = "Concept")
+/**
+ * Demonstrates empty OpMode
+ */
+@Autonomous(name = "ServoTest", group = "Concept")
 //@Disabled
-
-/*麦轮控制操作：左摇杆控制平移，平移方向与摇杆方向相同
-左右trigger控制旋转，左为逆时针右为顺时针，暂不支持同时使用平移与旋转功能
-按住b切换为低速形态*/
-public class MecanumTestOP extends OpMode {
-
+public class ServoTest extends OpMode {
+  double dpos = 0.01;
   private ElapsedTime runtime = new ElapsedTime();
-
-
-  private Mecanum mecanum = new Mecanum();
+  Servo Ser1;
 
   @Override
   public void init() {
+    Ser1 = hardwareMap.get(Servo.class,"ser1");
     telemetry.addData("Status", "Initialized");
-    mecanum.MotorL1 = hardwareMap.get(DcMotor.class,"motorLF");
-    mecanum.MotorL2 = hardwareMap.get(DcMotor.class,"motorLB");
-    mecanum.MotorR1 = hardwareMap.get(DcMotor.class,"motorRF");
-    mecanum.MotorR2 = hardwareMap.get(DcMotor.class,"motorRB");
-    telemetry.addData("MotorDeclare", "Complete");
-
   }
 
   /*
@@ -74,6 +65,7 @@ public class MecanumTestOP extends OpMode {
    */
   @Override
   public void start() {
+    Ser1.setPosition(Servo.MIN_POSITION);
     runtime.reset();
   }
 
@@ -83,19 +75,12 @@ public class MecanumTestOP extends OpMode {
    */
   @Override
   public void loop() {
-    double p;
-    if(this.gamepad1.b){
-      p = 0.2;
-    }
-    else{
-      p = 1;
-    }//低速切换
+    if(this.gamepad1.x && Ser1.getPosition() < Servo.MAX_POSITION)
+      Ser1.setPosition(Ser1.getPosition()+dpos);
+    if(this.gamepad1.a && Ser1.getPosition() > Servo.MIN_POSITION)
+      Ser1.setPosition(Ser1.getPosition()-dpos);
+    telemetry.addData("Position","%f",Ser1.getPosition());
     telemetry.addData("Status", "Run Time: " + runtime.toString());
-    if(this.gamepad1.left_stick_x == 0 && this.gamepad1.left_stick_y == 0){
-      mecanum.Circle(p * (this.gamepad1.left_trigger - this.gamepad1.right_trigger));//原地旋转
-    }
-    else{
-      mecanum.Stick(this.gamepad1.left_stick_x,this.gamepad1.left_stick_y,p);//手柄平移
-    }
+    telemetry.update();
   }
 }
