@@ -19,6 +19,9 @@ public class Mecanum{
     protected double R2 = 0;//右后
 
     protected DcMotor MotorL1,MotorL2,MotorR1,MotorR2;
+    final static double RADIUS = 4.9;
+    final static double selfRADIUS = 24.3;
+    final static double r = 1500;
 
     private void setMacanum(){
         MotorL1.setPower(L1);
@@ -61,7 +64,16 @@ public class Mecanum{
         double aM = (M1 + M2 + M3 + M4) / 4;
         return (Math.pow((M1 - aM),2) + Math.pow((M2 - aM),2) + Math.pow((M3 - aM),2) + Math.pow((M4 - aM),2)) / 3;
     }//获取速度方差
+    public double varPosition(){
+        double P1 = Math.abs(MotorL1.getCurrentPosition());
+        double P2 = Math.abs(MotorL2.getCurrentPosition());
+        double P3 = Math.abs(MotorR1.getCurrentPosition());
+        double P4 = Math.abs(MotorR2.getCurrentPosition());
+        double aP = (P1 + P2 + P3 + P4) / 4;
+        return (Math.pow((P1 - aP),2) + Math.pow((P2 - aP),2) + Math.pow((P3 - aP),2) + Math.pow((P4 - aP),2)) / 3;
+    }//获取position方差
 
+    double t1 = 1,t2 = 1,t3 = 1,t4 = 1;
     public double Targetspeed = 0;
     public double AM = 0;
     private void PIDMove(){
@@ -70,9 +82,11 @@ public class Mecanum{
         double RB = Math.abs(changeR2);
         double LF = Math.abs(changeL1);
 
+
         double TargetPosition = Math.min(LF,Math.min(Math.min(RF,LB),RB));
         if(TargetPosition == 0){
             setMacanum();
+            t1 = 1;t2 = 1;t3 = 1;t4 = 1;
             return;
         }
 
@@ -80,28 +94,175 @@ public class Mecanum{
             double shift1 = RF - TargetPosition;
             double deltaPower1 = gain(shift1);
             AM = gain(shift1);
-            R1 = R1 - deltaPower1 * (R1 / Math.abs(R1));
+            t1 -= deltaPower1;
         }
         if(IfinRange(RB,TargetPosition - 1,TargetPosition + 1) == false){
             double shift2 = RB - TargetPosition;
             double deltaPower2 = gain(shift2);
-            R2 = R2 - deltaPower2 * (R2 / Math.abs(R2));
+            t2 -= deltaPower2;
         }
         if(IfinRange(LB,TargetPosition - 1,TargetPosition + 1) == false){
             double shift3 = LB - TargetPosition;
             double deltaPower3 = gain(shift3);
-            L2 = L2 - deltaPower3 * (L2 / Math.abs(L2));
+            t3 -= deltaPower3;
         }
         if(IfinRange(LF,TargetPosition - 1,TargetPosition + 1) == false){
             double shift4 = LF - TargetPosition;
             double deltaPower4 = gain(shift4);
-            L1 = L1 - deltaPower4 * (L1 / Math.abs(L1));
+            t4 -= deltaPower4;
         }
         Targetspeed = TargetPosition;
-        setMacanum();
+        MotorL1.setPower(L1 * t4);
+        MotorL2.setPower(L2 * t3);
+        MotorR1.setPower(R1 * t1);
+        MotorR2.setPower(R2 * t2);
          return ;
     }
 
+    double dt1 = 1,dt2 = 1,dt3 = 1,dt4 = 1;
+    public boolean toCertainDistace(double v,double distance,int mode) {//1-向前，2-向后，3-向左，4-向右
+        double position = r * distance / (2 * Math.PI * RADIUS);
+        double PositionL1 = Math.abs(MotorL1.getCurrentPosition());
+        double PositionL2 = Math.abs(MotorL2.getCurrentPosition());
+        double PositionR1 = Math.abs(MotorR1.getCurrentPosition());
+        double PositionR2 = Math.abs(MotorR2.getCurrentPosition());
+        double TargetPosition = Math.min(PositionL1, Math.min(Math.min(PositionL2, PositionR1), PositionR2));
+
+
+        switch (mode){
+            case 1:
+                L1 = v;
+                L2 = v;
+                R1 = -v;
+                R2 = -v;
+                break;
+            case 2:
+                L1 = -v;
+                L2 = -v;
+                R1 = v;
+                R2 = v;
+                break;
+            case 3:
+                L1 = v;
+                L2 = -v;
+                R1 = v;
+                R2 = -v;
+                break;
+            case 4:
+                L1 = -v;
+                L2 = v;
+                R1 = -v;
+                R2 = v;
+                break;
+            default:
+                L1 = 0;
+                L2 = 0;
+                R1 = 0;
+                R2 = 0;
+                break;
+        }
+
+        if (TargetPosition < position) {
+            if(IfinRange(PositionL1,TargetPosition - 5,TargetPosition + 5) == false){
+                double shift1 = PositionL1 - TargetPosition;
+                double deltaPower1 = gain(shift1);
+                AM = gain(shift1);
+                dt1 -= deltaPower1;
+            }
+            if(IfinRange(PositionL2,TargetPosition - 5,TargetPosition + 5) == false){
+                double shift2 = PositionL2 - TargetPosition;
+                double deltaPower2 = gain(shift2);
+                dt2 -= deltaPower2;
+            }
+            if(IfinRange(PositionR1,TargetPosition - 5,TargetPosition + 5) == false){
+                double shift3 = PositionR1 - TargetPosition;
+                double deltaPower3 = gain(shift3);
+                dt3 -= deltaPower3;
+            }
+            if(IfinRange(PositionR2,TargetPosition - 5,TargetPosition + 5) == false){
+                double shift4 = PositionR2 - TargetPosition;
+                double deltaPower4 = gain(shift4);
+                dt4 -= deltaPower4;
+            }
+            MotorL1.setPower(L1 * dt1);
+            MotorL2.setPower(L2 * dt2);
+            MotorR1.setPower(R1 * dt3);
+            MotorR2.setPower(R2 * dt4);
+            return false;
+        }
+        else{
+            Stop();
+            dt1 = 1;dt2 = 1;dt3 = 1;dt4 = 1;
+            return true;
+        }
+    }//定距离平移
+
+    double at1 = 1,at2 = 1,at3 = 1,at4 = 1;
+    public boolean toCertainAngle(double v,double angle,int mode){//1-顺时针，2-逆时针
+        double distance = angle / 180 * Math.PI * selfRADIUS;
+        double position = r * distance / (2 * Math.PI * RADIUS);
+        double PositionL1 = Math.abs(MotorL1.getCurrentPosition());
+        double PositionL2 = Math.abs(MotorL2.getCurrentPosition());
+        double PositionR1 = Math.abs(MotorR1.getCurrentPosition());
+        double PositionR2 = Math.abs(MotorR2.getCurrentPosition());
+        double TargetPosition = Math.min(PositionL1, Math.min(Math.min(PositionL2, PositionR1), PositionR2));
+
+
+        switch (mode){
+            case 1:
+                L1 = v;
+                L2 = v;
+                R1 = v;
+                R2 = v;
+                break;
+            case 2:
+                L1 = -v;
+                L2 = -v;
+                R1 = -v;
+                R2 = -v;
+                break;
+            default:
+                L1 = 0;
+                L2 = 0;
+                R1 = 0;
+                R2 = 0;
+                break;
+        }
+
+        if (TargetPosition < position) {
+            if(IfinRange(PositionL1,TargetPosition - 5,TargetPosition + 5) == false){
+                double shift1 = PositionL1 - TargetPosition;
+                double deltaPower1 = gain(shift1);
+                AM = gain(shift1);
+                at1 -= deltaPower1;
+            }
+            if(IfinRange(PositionL2,TargetPosition - 5,TargetPosition + 5) == false){
+                double shift2 = PositionL2 - TargetPosition;
+                double deltaPower2 = gain(shift2);
+                at2 -= deltaPower2;
+            }
+            if(IfinRange(PositionR1,TargetPosition - 5,TargetPosition + 5) == false){
+                double shift3 = PositionR1 - TargetPosition;
+                double deltaPower3 = gain(shift3);
+                at3 -= deltaPower3;
+            }
+            if(IfinRange(PositionR2,TargetPosition - 5,TargetPosition + 5) == false){
+                double shift4 = PositionR2 - TargetPosition;
+                double deltaPower4 = gain(shift4);
+                at4 -= deltaPower4;
+            }
+            MotorL1.setPower(L1 * at1);
+            MotorL2.setPower(L2 * at2);
+            MotorR1.setPower(R1 * at3);
+            MotorR2.setPower(R2 * at4);
+            return false;
+        }
+        else{
+            Stop();
+            at1 = 1;at2 = 1;at3 = 1;at4 = 1;
+            return true;
+        }
+    }
     public void Stop(){
         L1 = 0;
         L2 = 0;
@@ -226,5 +387,24 @@ public class Mecanum{
         shift += 1;
         gain = 0.05 * Math.log10(shift);
         return gain;
+    }
+
+    public void resetMecanum(){
+        PIDClass.resetEncode(MotorL2);
+        PIDClass.resetEncode(MotorL1);
+        PIDClass.resetEncode(MotorR2);
+        PIDClass.resetEncode(MotorR1);
+        return;
+    }
+    static public void resetEncode(DcMotor motor){
+        motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        waitForRefresh();
+        motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    static public void waitForRefresh(){
+        for(int i = 0; i<= 20000;i++){
+
+        }
     }
 }

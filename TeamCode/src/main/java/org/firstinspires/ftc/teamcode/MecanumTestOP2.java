@@ -86,6 +86,10 @@ public class MecanumTestOP2 extends OpMode {
       mecanum.Stick2(this.gamepad1.left_stick_x * p,this.gamepad1.left_stick_y * p);//手柄平移
     }
     mecanum.getPositionChange();
+    telemetry.addData("LF","%d",mecanum.MotorL1.getCurrentPosition());
+    telemetry.addData("LB","%d",mecanum.MotorL2.getCurrentPosition());
+    telemetry.addData("RF","%d",mecanum.MotorR1.getCurrentPosition());
+    telemetry.addData("RB","%d",mecanum.MotorR2.getCurrentPosition());
     telemetry.addData("LF","%.3f",mecanum.L1);
     telemetry.addData("LB","%.3f",mecanum.L2);
     telemetry.addData("RF","%.3f",mecanum.R1);
@@ -96,6 +100,7 @@ public class MecanumTestOP2 extends OpMode {
     telemetry.addData("speedRB","%.3f",mecanum.changeR2);
     telemetry.addData("speedvar","%.3f",mecanum.varSpeed());
     telemetry.addData("Targetspeed","%.3f",mecanum.Targetspeed);
+    telemetry.addData("positionvar", "%.3f", mecanum.varPosition());
     telemetry.addData("AM","%.3f",mecanum.AM);
   }
 }

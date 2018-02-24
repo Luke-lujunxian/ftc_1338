@@ -63,10 +63,7 @@ public class MecanumTestOP extends OpMode {
 
   @Override
   public void start() {
-    PIDClass.resetEncode(mecanum.MotorL2);
-    PIDClass.resetEncode(mecanum.MotorL1);
-    PIDClass.resetEncode(mecanum.MotorR2);
-    PIDClass.resetEncode(mecanum.MotorR1);
+    mecanum.resetMecanum();
     runtime.reset();
   }
 
@@ -74,10 +71,9 @@ public class MecanumTestOP extends OpMode {
   public void loop() {
     telemetry.update();
     double p;
-    if(this.gamepad1.b){
+    if (this.gamepad1.b) {
       p = 0.2;
-    }
-    else{
+    } else {
       p = 1;
     }//低速切换
     telemetry.addData("Status", "Run Time: " + runtime.toString());
@@ -87,17 +83,26 @@ public class MecanumTestOP extends OpMode {
     else{
       mecanum.Stick(this.gamepad1.left_stick_x * p,this.gamepad1.left_stick_y * p);//手柄平移
     }
-    mecanum.getPositionChange();
-    telemetry.addData("LF","%.3f",mecanum.L1);
-    telemetry.addData("LB","%.3f",mecanum.L2);
-    telemetry.addData("RF","%.3f",mecanum.R1);
-    telemetry.addData("RB","%.3f",mecanum.R2);
-    telemetry.addData("speedLF","%.3f",mecanum.changeL1);
-    telemetry.addData("speedLB","%.3f",mecanum.changeL2);
-    telemetry.addData("speedRF","%.3f",mecanum.changeR1);
-    telemetry.addData("speedRB","%.3f",mecanum.changeR2);
-    telemetry.addData("speedvar","%.3f",mecanum.varSpeed());
-    telemetry.addData("Targetspeed","%.3f",mecanum.Targetspeed);
-    telemetry.addData("AM","%.3f",mecanum.AM);
+    //if (mecanum.toCertainDistace(1, 1000, 1) == false) {
+      mecanum.getPositionChange();
+      telemetry.addData("LF","%d",mecanum.MotorL1.getCurrentPosition());
+      telemetry.addData("LB","%d",mecanum.MotorL2.getCurrentPosition());
+      telemetry.addData("RF","%d",mecanum.MotorR1.getCurrentPosition());
+      telemetry.addData("RB","%d",mecanum.MotorR2.getCurrentPosition());
+      telemetry.addData("speedLF", "%.3f", mecanum.changeL1);
+      telemetry.addData("speedLB", "%.3f", mecanum.changeL2);
+      telemetry.addData("speedRF", "%.3f", mecanum.changeR1);
+      telemetry.addData("speedRB", "%.3f", mecanum.changeR2);
+      telemetry.addData("speedvar", "%.3f", mecanum.varSpeed());
+      telemetry.addData("positionvar", "%.3f", mecanum.varPosition());
+      telemetry.addData("Targetspeed", "%.3f", mecanum.Targetspeed);
+      telemetry.addData("AM", "%.3f", mecanum.AM);
+    //}
+    //else {
+      telemetry.addData("LF","%d",mecanum.MotorL1.getCurrentPosition());
+      telemetry.addData("LB","%d",mecanum.MotorL2.getCurrentPosition());
+      telemetry.addData("RF","%d",mecanum.MotorR1.getCurrentPosition());
+      telemetry.addData("RB","%d",mecanum.MotorR2.getCurrentPosition());
+    //}
   }
 }

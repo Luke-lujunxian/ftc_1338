@@ -67,7 +67,7 @@ public class RobotMap  {
 
     final static double AUTOSPEED = 0.4;
 
-    final static double RADIUS = 4.85;
+    final static double RADIUS = 4.9;
 
     final static double MOTOR_STRAIGHTPOWER = 0.4;
     final static double MOTOR_TURN_LEFTPOWER = 0;
