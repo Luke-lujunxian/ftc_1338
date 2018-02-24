@@ -85,27 +85,27 @@ public class MecanumAutoTest extends LinearOpMode {
     else{
       mecanum.Stick(this.gamepad1.left_stick_x * p,this.gamepad1.left_stick_y * p);//手柄平移
     }*/
-      while (mecanum.toCertainDistace(1, 100, 1) == false) {
+      while (!mecanum.toCertainDistace(1, 100, 1)) {
         mecanum.getPositionChange();
       }
       mecanum.resetMecanum();
-      while (mecanum.toCertainDistace(1, 100, 2) == false) {
+      while (!mecanum.toCertainDistace(1, 100, 2)) {
         mecanum.getPositionChange();
       }
       mecanum.resetMecanum();
-      while (mecanum.toCertainDistace(1, 100, 3) == false) {
+      while (!mecanum.toCertainDistace(1, 100, 3)) {
         mecanum.getPositionChange();
       }
       mecanum.resetMecanum();
-      while (mecanum.toCertainDistace(1, 100, 4) == false) {
+      while (!mecanum.toCertainDistace(1, 100, 4)) {
         mecanum.getPositionChange();
       }
       mecanum.resetMecanum();
-      while (mecanum.toCertainAngle(1, 180, 1) == false) {
+      while (!mecanum.toCertainAngle(1, 180, 1)) {
         mecanum.getPositionChange();
       }
       mecanum.resetMecanum();
-      while (mecanum.toCertainAngle(1, 180, -1) == false) {
+      while (!mecanum.toCertainAngle(1, 180, -1)) {
         mecanum.getPositionChange();
       }
       mecanum.getPositionChange();

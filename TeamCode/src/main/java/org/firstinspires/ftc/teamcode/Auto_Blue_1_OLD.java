@@ -31,11 +31,9 @@ package org.firstinspires.ftc.teamcode;
 
 import android.graphics.Color;
 
-import com.qualcomm.hardware.matrix.MatrixServoController;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -51,7 +49,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
-import org.firstinspires.ftc.robotcore.external.navigation.VuMarkInstanceId;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
@@ -62,9 +59,9 @@ import java.util.Locale;
 /**
  * Demonstrates empty OpMode
  */
-@Autonomous(name = "T2", group = "Concept")
-//@Disabled
-public class TestOP2 extends OpMode {
+@Autonomous(name = "Auto_Blue_1_OLD", group = "Concept")
+@Disabled
+public class Auto_Blue_1_OLD extends OpMode {
     static int VisualResult = 0;
 
     private ElapsedTime runtime = new ElapsedTime();
@@ -99,8 +96,8 @@ public class TestOP2 extends OpMode {
         sensorDistance = hardwareMap.get(DistanceSensor.class, "sensor_color_distance");
         Servo1 = hardwareMap.get(Servo.class, "ser1");
         Servo2 = hardwareMap.get(Servo.class, "ser2");
-        Servo1.setPosition(RobotMap.SERVO1_INITIAL);
-        Servo2.setPosition(RobotMap.SERVO2_INITIAL);
+        Servo1.setPosition(0.47);
+        Servo2.setPosition(0.27);
 
     }
 
@@ -180,25 +177,12 @@ public class TestOP2 extends OpMode {
     @Override
     public void start() {
         runtime.reset();
-        Servo2.setPosition(RobotMap.SERVO2_TEST);
+        Servo2.setPosition(0.78);
 
         float hsvValues[] = {0F, 0F, 0F};
         final float values[] = hsvValues;
         final double SCALE_FACTOR = 255;           //颜色处理（不用管）
 
-        //检测舵机2是否故障
-        int i = 0;
-        double lastPos;
-        lastPos = Servo2.getPosition();
-        while (Servo2.getPosition() != RobotMap.SERVO2_TEST) {
-            i++;
-            if(i==50 && Servo2.getPosition()-lastPos == 0){
-                return;
-            }else if(i == 50){
-                i = 0;
-                lastPos = Servo2.getPosition();
-            }
-        }
 
         while (true) {
 
@@ -217,14 +201,25 @@ public class TestOP2 extends OpMode {
             telemetry.addData("Hue", hsvValues[0]);
             telemetry.update();
 
-
+            int i = 0;
+            double lastPos = 0;
+            //检测舵机2是否故障
+            lastPos = Servo2.getPosition();
+            while (Servo2.getPosition() != 0.78) {
+                i++;
+                if(i==50 && Servo2.getPosition()-lastPos == 0){
+                    return;
+                }else if(i == 50){
+                    i = 0;
+                    lastPos = Servo2.getPosition();
+                }
+            }
 
             lastPos = Servo1.getPosition();
-
             if (hsvValues[0] > 250 && hsvValues[0] < 260) {//蓝色
-                Servo1.setPosition(RobotMap.SERVO1_TEST);
+                Servo1.setPosition(0.78);
                 //检测舵机1是否故障
-                while (Servo1.getPosition() != RobotMap.SERVO1_TEST) {
+                while (Servo1.getPosition() != 0.78) {
                     i++;
                     if(i==50 && Servo1.getPosition()-lastPos == 0){
                         return;
@@ -234,10 +229,11 @@ public class TestOP2 extends OpMode {
                     }
                 }
                 break;
+
             }else if(hsvValues[0]>40 && hsvValues[0]<50 ){//红色
-                Servo1.setPosition(RobotMap.SERVO1_TEST);
+                Servo1.setPosition(0);
                 //检测舵机1是否故障
-                while (Servo1.getPosition() != RobotMap.SERVO1_TEST) {
+                while (Servo1.getPosition() != 0) {
                     i++;
                     if(i==50 && Servo1.getPosition()-lastPos == 0){
                         return;
@@ -250,10 +246,10 @@ public class TestOP2 extends OpMode {
             }
         }
 
-        while (Servo1.getPosition() != RobotMap.SERVO1_INITIAL){
-            Servo1.setPosition(RobotMap.SERVO1_INITIAL);
+        while (Servo1.getPosition() != 0.47){
+            Servo1.setPosition(0.47);
         }
-        Servo2.setPosition(RobotMap.SERVO2_INITIAL);
+        Servo2.setPosition(0.27);
 
 
     }
@@ -264,6 +260,10 @@ public class TestOP2 extends OpMode {
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.addData("识别结果", "%d", VisualResult);
         telemetry.update();
+    /*M1.setPower(0.5);
+    M2.setPower(-0.5);
+    M3.setPower(-0.5);
+    M4.setPower(0.5);*/
 
     }
 

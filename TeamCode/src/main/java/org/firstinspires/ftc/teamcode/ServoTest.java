@@ -68,6 +68,8 @@ public class ServoTest extends OpMode {
   @Override
   public void start() {
     Ser1.setPosition(Servo.MIN_POSITION);
+    Ser2.setPosition(Servo.MIN_POSITION);
+
     runtime.reset();
   }
 

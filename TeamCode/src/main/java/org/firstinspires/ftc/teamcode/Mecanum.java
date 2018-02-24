@@ -23,6 +23,16 @@ public class Mecanum{
     final static double selfRADIUS = 24.3;
     final static double r = 1500;
 
+    Mecanum(DcMotor MotorL1,DcMotor MotorL2,DcMotor MotorR1,DcMotor MotorR2){
+        this.MotorL1 = MotorL1;
+        this.MotorL2 = MotorL2;
+        this.MotorR1 = MotorR1;
+        this.MotorR2 = MotorR2;
+    }
+    Mecanum(){
+
+    }
+
     private void setMacanum(){
         MotorL1.setPower(L1);
         MotorL2.setPower(L2);
@@ -90,23 +100,23 @@ public class Mecanum{
             return;
         }
 
-        if(IfinRange(RF,TargetPosition - 1,TargetPosition + 1) == false){
+        if(!IfinRange(RF, TargetPosition - 1, TargetPosition + 1)){
             double shift1 = RF - TargetPosition;
             double deltaPower1 = gain(shift1);
             AM = gain(shift1);
             t1 -= deltaPower1;
         }
-        if(IfinRange(RB,TargetPosition - 1,TargetPosition + 1) == false){
+        if(!IfinRange(RB, TargetPosition - 1, TargetPosition + 1)){
             double shift2 = RB - TargetPosition;
             double deltaPower2 = gain(shift2);
             t2 -= deltaPower2;
         }
-        if(IfinRange(LB,TargetPosition - 1,TargetPosition + 1) == false){
+        if(!IfinRange(LB, TargetPosition - 1, TargetPosition + 1)){
             double shift3 = LB - TargetPosition;
             double deltaPower3 = gain(shift3);
             t3 -= deltaPower3;
         }
-        if(IfinRange(LF,TargetPosition - 1,TargetPosition + 1) == false){
+        if(!IfinRange(LF, TargetPosition - 1, TargetPosition + 1)){
             double shift4 = LF - TargetPosition;
             double deltaPower4 = gain(shift4);
             t4 -= deltaPower4;

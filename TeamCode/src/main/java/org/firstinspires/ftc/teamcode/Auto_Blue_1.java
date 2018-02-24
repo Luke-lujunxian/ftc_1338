@@ -31,11 +31,8 @@ package org.firstinspires.ftc.teamcode;
 
 import android.graphics.Color;
 
-import com.qualcomm.hardware.matrix.MatrixServoController;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -51,7 +48,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
-import org.firstinspires.ftc.robotcore.external.navigation.VuMarkInstanceId;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
@@ -62,9 +58,9 @@ import java.util.Locale;
 /**
  * Demonstrates empty OpMode
  */
-@Autonomous(name = "T2", group = "Concept")
+@Autonomous(name = "Auto_Blue_1", group = "Concept")
 //@Disabled
-public class TestOP2 extends OpMode {
+public class Auto_Blue_1 extends OpMode {
     static int VisualResult = 0;
 
     private ElapsedTime runtime = new ElapsedTime();
@@ -222,9 +218,9 @@ public class TestOP2 extends OpMode {
             lastPos = Servo1.getPosition();
 
             if (hsvValues[0] > 250 && hsvValues[0] < 260) {//蓝色
-                Servo1.setPosition(RobotMap.SERVO1_TEST);
+                Servo1.setPosition(RobotMap.SERVO1_HIT_LEFT);
                 //检测舵机1是否故障
-                while (Servo1.getPosition() != RobotMap.SERVO1_TEST) {
+                while (Servo1.getPosition() != RobotMap.SERVO1_HIT_LEFT) {
                     i++;
                     if(i==50 && Servo1.getPosition()-lastPos == 0){
                         return;
@@ -235,9 +231,9 @@ public class TestOP2 extends OpMode {
                 }
                 break;
             }else if(hsvValues[0]>40 && hsvValues[0]<50 ){//红色
-                Servo1.setPosition(RobotMap.SERVO1_TEST);
+                Servo1.setPosition(RobotMap.SERVO1_HIT_RIGHT);
                 //检测舵机1是否故障
-                while (Servo1.getPosition() != RobotMap.SERVO1_TEST) {
+                while (Servo1.getPosition() != RobotMap.SERVO1_HIT_RIGHT) {
                     i++;
                     if(i==50 && Servo1.getPosition()-lastPos == 0){
                         return;
@@ -258,13 +254,46 @@ public class TestOP2 extends OpMode {
 
     }
 
-
+    Mecanum mecanum = new Mecanum(MotorLF,MotorLB,MotorRF,MotorRB);
     @Override
     public void loop() {
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.addData("识别结果", "%d", VisualResult);
         telemetry.update();
 
+        while (!mecanum.toCertainDistace(1,85.1,1))
+            mecanum.getPositionChange();
+        mecanum.resetMecanum();
+
+        while (!mecanum.toCertainAngle(1,90,1))
+            mecanum.getPositionChange();
+        mecanum.resetMecanum();
+
+        switch (VisualResult){
+            case 0:{//左
+                while (!mecanum.toCertainDistace(1,18.2,3))
+                    mecanum.getPositionChange();
+                break;
+            }
+            case 1:{
+                break;
+            }
+            case 2:{
+                while (!mecanum.toCertainDistace(1,18.7,4)){
+                    mecanum.getPositionChange();
+                }
+                break;
+            }
+        }
+        mecanum.resetMecanum();
+        //推球
+
+        while (!mecanum.toCertainDistace(1,22.6,1))
+            mecanum.getPositionChange();
+        mecanum.resetMecanum();
+
+        while (!mecanum.toCertainDistace(1,10,2))
+            mecanum.getPositionChange();
     }
 
 }
