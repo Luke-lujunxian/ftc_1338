@@ -79,6 +79,16 @@ public class RobotMap  {
     final static double DISTANCE_3 = -65;
     final static double DISTANCE_4 = 170;
 
+    final static double SERVO1_INITIAL = 0.47;
+    final static double SERVO1_TEST = 0.47;
+    final static double SERVO1_HIT_LEFT = 0.81;
+    final static double SERVO1_HIT_RIGHT = 0.19;
+
+    final static double SERVO2_INITIAL = 0.33;
+    final static double SERVO2_TEST = 0.94;
+    final static double SERVO2_HIT_LEFT = 0.94;
+    final static double SERVO2_HIT_RIGHT = 0.94;
+
 
 
 
